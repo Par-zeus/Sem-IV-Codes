@@ -1,63 +1,59 @@
 #include <stdio.h>
 #include <stdbool.h>
-
 #define MAX_SIZE 100
+int set[MAX_SIZE];
+int subset[MAX_SIZE];
+int n;
+int targetSum;
 
-// Function to find all subsets with given sum
-void findSubsets(int set[], bool selected[], int n, int targetSum, int subsetSum, int index)
+void subsetSumUtil(int currentIndex, int currentSum, int start)
 {
-    if (subsetSum == targetSum)
+    if (currentSum == targetSum)
     {
-        // Print the subset
-        printf("{ ");
-        bool isFirst = true;
-        for (int i = 0; i < n; i++)
+       
+        printf("Subset with sum %d found: ", targetSum);
+        for (int i = 0; i < currentIndex; i++)
         {
-            if (selected[i])
-            {
-                if (!isFirst)
-                {
-                    printf(" ");
-                }
-                printf("%d", set[i]);
-                isFirst = false;
-            }
+            printf("%d ", subset[i]);
         }
-        printf(" }\n");
+        printf("\n");
+    }
+    if (currentSum >= targetSum || start == n)
+    {
         return;
     }
 
-    if (index == n || subsetSum > targetSum)
-        return;
-
-    // Include the current element and move to the next one
-    selected[index] = true;
-    findSubsets(set, selected, n, targetSum, subsetSum + set[index], index + 1);
-
-    // Exclude the current element and move to the next one
-    selected[index] = false;
-    findSubsets(set, selected, n, targetSum, subsetSum, index + 1);
+    
+    
+    subset[currentIndex] = set[start];
+    subsetSumUtil(currentIndex + 1, currentSum + set[start], start + 1);
+    
+    
+    subsetSumUtil(currentIndex, currentSum, start + 1);
 }
 
+void subsetSum(int inputSet[], int setSize, int sum)
+{
+    n = setSize;
+    targetSum = sum;
+    for (int i = 0; i < n; i++)
+    {
+        set[i] = inputSet[i];
+    }
+    subsetSumUtil(0, 0, 0);
+}
 int main()
 {
-    int set[MAX_SIZE];
-    bool selected[MAX_SIZE] = {false};
-    int n, targetSum;
-
-    printf("Enter the number of elements in the set: ");
-    scanf("%d", &n);
-
-    printf("Enter the elements of the set:\n");
-    for (int i = 0; i < n; i++)
+    int setSize, sum;
+    printf("Enter the size of the set: ");
+    scanf("%d", &setSize);
+    printf("Enter the elements of the set: \n");
+    for (int i = 0; i < setSize; i++)
     {
         scanf("%d", &set[i]);
     }
-
     printf("Enter the target sum: ");
-    scanf("%d", &targetSum);
-
-    printf("Subsets with sum %d are:\n", targetSum);
-    findSubsets(set, selected, n, targetSum, 0, 0);
+    scanf("%d", &sum);
+    subsetSum(set, setSize, sum);
     return 0;
 }
